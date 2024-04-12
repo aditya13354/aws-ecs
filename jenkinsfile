@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: 'YOUR_GIT_REPO_URL'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    docker.build("ccf-platform:${env.BUILD_NUMBER}")
+                }
+            }
+        }
+
+        stage('Push to ECR') {
+            steps {
+                script {
+                    docker.withRegistry('https://903054967221.dkr.ecr.us-east-1.amazonaws.com/ccf-platform', 'ecr:AWS-CRED') {
+                        docker.image("ccf-platform:${env.BUILD_NUMBER}").push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to ECS') {
+            steps {
+                sh './deploy_to_ecs.sh ccf-platform:${env.BUILD_NUMBER}'
+            }
+        }
+    }
+}
