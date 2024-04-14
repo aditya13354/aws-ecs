@@ -21,6 +21,11 @@ echo "Current Task Definition ARN: $OLD_TASK_DEF"
 # Register new task definition with updated Docker image
 NEW_TASK_DEF=$(aws ecs register-task-definition \
   --family $TASK_FAMILY \
+  --cpu $CPU \
+  --memory $MEMORY \
+  --network-mode "awsvpc" \
+  --execution-role-arn "arn:aws:iam::903054967221:role/ecsTaskExecutionRole" \
+  --requires-compatibilities "FARGATE" \
   --container-definitions "[{
     \"name\": \"$TASK_FAMILY\",
     \"image\": \"$NEW_DOCKER_IMAGE\",
@@ -38,13 +43,5 @@ aws ecs update-service \
   --cluster $CLUSTER_NAME \
   --service $SERVICE_NAME \
   --task-definition $NEW_TASK_DEF
-
-# Deregister old task definitions (optional)
-echo "Deregistering old task definitions..."
-OLD_TASK_DEFS=$(aws ecs list-task-definitions --family-prefix $TASK_FAMILY --status ACTIVE --query "taskDefinitionArns[0:-1]" --output json)
-for task_def in $(echo $OLD_TASK_DEFS | jq -r '.[]'); do
-  echo "Deregistering task definition: $task_def"
-  aws ecs deregister-task-definition --task-definition $task_def
-done
 
 echo "ECS service deployment complete!"
