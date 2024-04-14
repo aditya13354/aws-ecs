@@ -54,4 +54,4 @@ fi
 aws ecs register-task-definition --cli-input-json "$FINAL_TASK"
 
 # Update the ECS service with the new task definition
-aws ecs update-service --service $SERVICE_NAME --task-definition $TASK_FAMILY --cluster $CLUSTER_NAME
+aws ecs update-service --service $SERVICE_NAME --task-definition $TASK_FAMILY --cluster $CLUSTER_NAME  --requires-compatibilities 'fargate'
