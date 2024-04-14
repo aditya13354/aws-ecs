@@ -36,7 +36,7 @@ if [ -z "$NEW_TASK_DEF" ]; then
 fi
 
 # Extract only required fields for registering the new task definition
-FINAL_TASK=$(echo $NEW_TASK_DEF | jq '.taskDefinition|{family: .family, volumes: .volumes, containerDefinitions: .containerDefinitions | map( (. + {"memory": "512", "memoryReservation": "256"}) ) }')
+FINAL_TASK=$(echo $NEW_TASK_DEF | jq --argjson memory 512 --argjson memoryReservation 256 '.taskDefinition | {family: .family, volumes: .volumes, containerDefinitions: [.containerDefinitions[] | .memory=$memory | .memoryReservation=$memoryReservation] }')
 
 echo "FINAL_TASK:"
 echo "$FINAL_TASK"
