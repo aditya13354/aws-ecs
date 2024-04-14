@@ -7,7 +7,7 @@ NEW_DOCKER_IMAGE="903054967221.dkr.ecr.us-east-1.amazonaws.com/ccf-platform:${BU
 CLUSTER_NAME="ccf-platform"
 LAUNCH_TYPE="EC2"  # Use EC2 launch type instead of Fargate
 NETWORK_MODE="bridge"  # Adjust network mode as needed
-EXECUTION_ROLE_ARN="arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskExecutionRole"  # Replace with your execution role ARN
+EXECUTION_ROLE_ARN="arn:aws:iam::903054967221:role/ecsTaskExecutionRole"  # Replace with your execution role ARN
 
 # Export the AWS credentials as environment variables
 export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
@@ -51,7 +51,7 @@ if [ -z "$FINAL_TASK" ]; then
 fi
 
 # Register the new task definition
-aws ecs register-task-definition --family $TASK_FAMILY --cli-input-json "$FINAL_TASK"
+aws ecs register-task-definition --cli-input-json "$FINAL_TASK"
 
 # Update the ECS service with the new task definition
 aws ecs update-service --service $SERVICE_NAME --task-definition $TASK_FAMILY --cluster $CLUSTER_NAME
