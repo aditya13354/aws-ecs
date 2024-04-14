@@ -5,8 +5,8 @@ TASK_FAMILY="ccf-platform"
 SERVICE_NAME="ccf-platform"
 NEW_DOCKER_IMAGE="903054967221.dkr.ecr.us-east-1.amazonaws.com/ccf-platform:${BUILD_NUMBER}"
 CLUSTER_NAME="ccf-platform"
-LAUNCH_TYPE="EC2"  # Use EC2 launch type instead of Fargate
-NETWORK_MODE="bridge"  # Adjust network mode as needed
+LAUNCH_TYPE="FARGATE"  # Set launch type to Fargate
+NETWORK_MODE="awsvpc"  # Adjust network mode as needed
 EXECUTION_ROLE_ARN="arn:aws:iam::903054967221:role/ecsTaskExecutionRole"  # Replace with your execution role ARN
 
 # Export the AWS credentials as environment variables
@@ -53,5 +53,5 @@ fi
 # Register the new task definition
 aws ecs register-task-definition --cli-input-json "$FINAL_TASK"
 
-# Update the ECS service with the new task definition
-aws ecs update-service --service $SERVICE_NAME --task-definition $TASK_FAMILY --cluster $CLUSTER_NAME  --requires-compatibilities 'fargate'
+# Update the ECS service with the new task definition and specify Fargate compatibility
+aws ecs update-service --service $SERVICE_NAME --task-definition $TASK_FAMILY --cluster $CLUSTER_NAME --requires-compatibilities "FARGATE"
