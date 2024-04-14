@@ -1,5 +1,12 @@
 pipeline {
     agent any
+    environment {
+        vprofileRegistry = 'https://903054967221.dkr.ecr.us-east-1.amazonaws.com' // Remove "https://" protocol
+        registryCredential = 'ecr:us-east-1:aws'
+        aws_cred = 'aws'// Credential ID for accessing ECR
+        dockerImage = "ccf-platform" // Define the Docker image name
+        awsRegion = 'us-east-1' // Specify your AWS region
+    }
 
     stages {
         stage('Checkout') {
@@ -11,16 +18,18 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    docker.build("ccf-platform:${env.BUILD_NUMBER}")
+                    // Build the Docker image with the Jenkins build number as the tag
+                    docker.build("${dockerImage}:${env.BUILD_NUMBER}")
                 }
             }
         }
 
-        stage('Push to ECR') {
+        stage('Upload App Image') {
             steps {
                 script {
-                    docker.withRegistry('https://903054967221.dkr.ecr.us-east-1.amazonaws.com/ccf-platform', 'ecr:AWS-CRED') {
-                        docker.image("ccf-platform:${env.BUILD_NUMBER}").push()
+                    // Push the Docker image to ECR with the Jenkins build number as the tag
+                    docker.withRegistry("${vprofileRegistry}", "${registryCredential}") {
+                        docker.image("${dockerImage}:${env.BUILD_NUMBER}").push()
                     }
                 }
             }
@@ -28,7 +37,13 @@ pipeline {
 
         stage('Deploy to ECS') {
             steps {
-                sh './deploy_to_ecs.sh ccf-platform:${env.BUILD_NUMBER}'
+                script {
+                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: aws_cred]]) {
+                    // Execute the shell script to deploy the service to ECS
+                    sh "chmod +x deploy_to_ecs.sh" // Ensure the script is executable
+                    sh "./deploy_to_ecs.sh"
+                     }
+                }
             }
         }
     }
