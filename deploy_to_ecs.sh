@@ -31,7 +31,13 @@ NEW_TASK_DEF=$(aws ecs register-task-definition \
     \"image\": \"$NEW_DOCKER_IMAGE\",
     \"cpu\": $CPU,
     \"memory\": $MEMORY,
-    \"essential\": true
+    \"essential\": true,
+    \"portMappings\": [
+      {
+        \"containerPort\": 5000,
+        \"protocol\": \"tcp\"
+      }
+    ]
   }]" \
   --query "taskDefinition.taskDefinitionArn" \
   --output text)
