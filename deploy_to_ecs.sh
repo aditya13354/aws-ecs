@@ -6,16 +6,11 @@ SERVICE_NAME="ccf-platform"
 NEW_DOCKER_IMAGE="903054967221.dkr.ecr.us-east-1.amazonaws.com/ccf-platform:${BUILD_NUMBER}"
 CLUSTER_NAME="ccf-platform"
 
-# Fetch the AWS credentials from the registryCredential step
-AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile registryCredential)
-AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile registryCredential)
-AWS_DEFAULT_REGION="us-east-1" # Specify the AWS region
 
 # Export the AWS credentials as environment variables
-export AWS_ACCESS_KEY_ID
-export AWS_SECRET_ACCESS_KEY
-export AWS_DEFAULT_REGION
-
+ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+AWS_REGION='us-east-1'
 # Fetch the current task definition JSON
 OLD_TASK_DEF=$(aws ecs describe-task-definition --task-definition $TASK_FAMILY)
 
