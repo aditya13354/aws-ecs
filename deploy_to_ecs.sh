@@ -5,6 +5,8 @@ TASK_FAMILY="ccf-platform"
 SERVICE_NAME="ccf-platform"
 NEW_DOCKER_IMAGE="903054967221.dkr.ecr.us-east-1.amazonaws.com/ccf-platform:${BUILD_NUMBER}"
 CLUSTER_NAME="ccf-platform"
+LAUNCH_TYPE="FARGATE"
+NETWORK_MODE="awsvpc"
 
 # Export the AWS credentials as environment variables
 export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
@@ -36,7 +38,7 @@ if [ -z "$NEW_TASK_DEF" ]; then
 fi
 
 # Extract only required fields for registering the new task definition
-FINAL_TASK=$(echo $NEW_TASK_DEF | jq --argjson memory 512 --argjson memoryReservation 256 '.taskDefinition | {family: .family, volumes: .volumes, containerDefinitions: [.containerDefinitions[] | .memory=$memory | .memoryReservation=$memoryReservation] }')
+FINAL_TASK=$(echo $NEW_TASK_DEF | jq --argjson memory 512 --argjson memoryReservation 256 --arg launchType $LAUNCH_TYPE --arg networkMode $NETWORK_MODE '.taskDefinition | {family: .family, volumes: .volumes, containerDefinitions: [.containerDefinitions[] | .memory=$memory | .memoryReservation=$memoryReservation], networkMode: $networkMode, requiresCompatibilities: [$launchType] }')
 
 echo "FINAL_TASK:"
 echo "$FINAL_TASK"
