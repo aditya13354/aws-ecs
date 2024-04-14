@@ -8,6 +8,7 @@ CLUSTER_NAME="ccf-platform"
 LAUNCH_TYPE="FARGATE"  # Set launch type to Fargate
 NETWORK_MODE="awsvpc"  # Adjust network mode as needed
 EXECUTION_ROLE_ARN="arn:aws:iam::903054967221:role/ecsTaskExecutionRole"  # Replace with your execution role ARN
+CPU="256"  # CPU units for Fargate task
 
 # Export the AWS credentials as environment variables
 export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
@@ -39,7 +40,7 @@ if [ -z "$NEW_TASK_DEF" ]; then
 fi
 
 # Extract only required fields for registering the new task definition
-FINAL_TASK=$(echo $NEW_TASK_DEF | jq --argjson memory 512 --argjson memoryReservation 256 --arg launchType $LAUNCH_TYPE --arg networkMode $NETWORK_MODE --arg executionRoleArn $EXECUTION_ROLE_ARN '.taskDefinition | {family: .family, volumes: .volumes, containerDefinitions: [.containerDefinitions[] | .memory=$memory | .memoryReservation=$memoryReservation], networkMode: $networkMode, requiresCompatibilities: [$launchType], executionRoleArn: $executionRoleArn }')
+FINAL_TASK=$(echo $NEW_TASK_DEF | jq --argjson memory 512 --argjson memoryReservation 256 --arg launchType $LAUNCH_TYPE --arg networkMode $NETWORK_MODE --arg executionRoleArn $EXECUTION_ROLE_ARN --argjson cpu $CPU '.taskDefinition | {family: .family, volumes: .volumes, containerDefinitions: [.containerDefinitions[] | .memory=$memory | .memoryReservation=$memoryReservation | .cpu=$cpu], networkMode: $networkMode, requiresCompatibilities: [$launchType], executionRoleArn: $executionRoleArn }')
 
 echo "FINAL_TASK:"
 echo "$FINAL_TASK"
