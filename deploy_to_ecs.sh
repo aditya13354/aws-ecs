@@ -15,11 +15,11 @@ TASK_DEF_REVISION_TO_RETAIN=20
 # Docker Image Details
 DOCKER_IMAGE="YOUR_DOCKER_IMAGE"
 JENKINS_BUILD_NUMBER="$BUILD_NUMBER"
-IMAGE_TAG="${DOCKER_IMAGE}:${JENKINS_BUILD_NUMBER}"
+IMAGE_TAG="${DOCKER_IMAGE,,}:${JENKINS_BUILD_NUMBER}" # Convert to lowercase
 
 # Tag Docker image with Jenkins build number
 echo "Tagging Docker image with Jenkins build number..."
-docker tag ${DOCKER_IMAGE} ${IMAGE_TAG}
+docker tag ${DOCKER_IMAGE,,} ${IMAGE_TAG}
 
 # Push Docker image to ECR
 echo "Pushing Docker image to ECR..."
