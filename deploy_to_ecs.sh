@@ -3,7 +3,7 @@
 # AWS Credentials
 export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_ACCESS_KEY"
-export AWS_DEFAULT_REGION="YOUR_AWS_REGION"
+export AWS_DEFAULT_REGION="us-east-1"
 
 # ECS Service Details
 CLUSTER_NAME="ccf-platform"
