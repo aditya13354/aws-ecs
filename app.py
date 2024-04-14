@@ -14,7 +14,7 @@ def elapsed():
 
 @app.route('/')
 def root():
-    return "Hello World- New Version (Python)! (up %s)\n" % elapsed()
+    return "New Code deployed (up %s)\n" % elapsed()
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
